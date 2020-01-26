@@ -1,0 +1,41 @@
+# grafana dashboards
+
+- Telegraf - system metrics(linux)
+https://grafana.com/grafana/dashboards/5955
+- Telegraf & Influx Windows Host Overview(windows)
+https://grafana.com/grafana/dashboards/1902
+- Telegraf Windows Instances
+https://grafana.com/grafana/dashboards/1635
+- Graylog Metrics, read overview
+https://grafana.com/grafana/dashboards/2549
+
+# telegraf nginx logparser
+
+Nginx log format
+
+log_format main '$remote_addr - $remote_user [$time_local] "$request" '
+'$status $body_bytes_sent "$http_referer" '
+'"$http_user_agent" "$http_x_forwarded_for" $request_time';
+
+telegraf config
+
+[[inputs.logparser]]
+  files = ["/var/log/nginx/access.log"]
+  from_beginning = true
+  name_override = "nginx_access"
+  [inputs.logparser.grok]
+    patterns = ["%{CUSTOM_LOG}"]
+    custom_patterns = '''
+      CUSTOM_LOG %{COMBINED_LOG_FORMAT} %{NUMBER:response_time_us:float}
+    '''
+
+
+- https://www.influxdata.com/blog/telegraf-correlate-log-metrics-data-performance-bottlenecks/
+
+/var/log/nginx/access.log
+
+SELECT * FROM "nginx_access_log" limit 100
+
+
+
+SELECT last("remoteAddr"), count("remoteAddr") as count_addr FROM "ecfe_nginx" WHERE time > now() - 5m  and request != '/php-status?json' and request != '/index.php?show=ver'  and request != '/php-status'  GROUP BY time($__interval) 

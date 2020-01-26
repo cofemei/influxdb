@@ -1,0 +1,19 @@
+notifiers:
+  - name: notification-slack
+    type: slack
+    uid: notifier1
+    # either
+    org_id: 2
+    # or
+    org_name: Main Org.
+    is_default: true
+    send_reminder: true
+    frequency: 1h
+    disable_resolve_message: false
+    # See `Supported Settings` section for settings supporter for each
+    # alert notification type.
+    settings:
+      recipient: "test"
+      username: "grafana"
+      url: "https://hooks.slack.com/services/T3B6JRULW/B3JP79B7C/X"
+      icon_emoji: ":smile:"
